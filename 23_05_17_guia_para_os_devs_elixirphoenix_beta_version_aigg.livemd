@@ -1,4 +1,4 @@
-# Guia para os devs Elixir/Phoenix - Beta Version
+# Guia para os devs Elixir/Phoenix
 
 ```elixir
 Mix.install([
@@ -13,11 +13,11 @@ Mix.install([
 
 ### Conteúdo
 
-* Guia de Code Style
-* Estrutura básica dos projetos na Arquitetura Phoenix
-* Nomenclaturas
-* Funções no Repo
-* Uso do "alias"
+- Guia de Code Style
+- Estrutura básica dos projetos na Arquitetura Phoenix
+- Nomenclaturas
+- Funções no Repo
+- Uso do "alias"
 
 <!-- livebook:{"break_markdown":true} -->
 
@@ -149,5 +149,5 @@ alias Example.Repo
 
 Dessa forma fica mais explícito a camada/domínidio do código como por exemplo<br>
 
-* `Repo.Users.get(user_id)`
-* `Repo.Posts.get(post_id)`
+- `Repo.Users.get(user_id)`
+- `Repo.Posts.get(post_id)`
