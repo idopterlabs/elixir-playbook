@@ -1,4 +1,4 @@
-# Guia para os devs Elixir/Phoenix - Preview
+# Guia para os devs Elixir/Phoenix - Preview :D
 
 ```elixir
 Mix.install([
@@ -9,15 +9,15 @@ Mix.install([
 
 ## Convenções da Idopter Labs
 
-![](images/image-removebg-preview%20%281%29.png)
+![](<https://github.com/idopterlabs/elixir-playbook/blob/main/images/image-removebg-preview%20(1).png?raw=true>)
 
 ### Conteúdo
 
-- Guia de Code Style
-- Estrutura básica dos projetos na Arquitetura Phoenix
-- Nomenclaturas
-- Funções no Repo
-- Uso do "alias"
+* Guia de Code Style
+* Estrutura básica dos projetos na Arquitetura Phoenix
+* Nomenclaturas
+* Funções no Repo
+* Uso do "alias"
 
 <!-- livebook:{"break_markdown":true} -->
 
@@ -31,11 +31,11 @@ A principal referência em estilo de código em Elixir, mantido pela comunidade 
 
 ### Arquitetura a ser seguida no Phoenix:
 
-![](images/arquitetura.png)
+![](https://github.com/idopterlabs/elixir-playbook/blob/main/images/arquitetura.png?raw=true)
 
 #### Exemplo:
 
-![](images/exemplo_arquitetura.png)
+![](https://github.com/idopterlabs/elixir-playbook/blob/main/images/exemplo_arquitetura.png?raw=true)
 
 ## Nomemclaturas - Funções no Repo
 
@@ -149,5 +149,5 @@ alias Example.Repo
 
 Dessa forma fica mais explícito a camada/domínidio do código como por exemplo<br>
 
-- `Repo.Users.get(user_id)`
-- `Repo.Posts.get(post_id)`
+* `Repo.Users.get(user_id)`
+* `Repo.Posts.get(post_id)`
