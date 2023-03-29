@@ -1,4 +1,4 @@
-# Guia para os devs Elixir/Phoenix - Beta
+# Guia para os devs Elixir/Phoenix
 
 ```elixir
 Mix.install([
