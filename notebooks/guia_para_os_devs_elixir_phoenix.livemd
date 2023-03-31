@@ -263,8 +263,6 @@ defmodule PlayBook.Api.ViaCep.Search do
 end
 ```
 
-
-
 ```elixir
 alias PlayBook.Api.ViaCep
 
