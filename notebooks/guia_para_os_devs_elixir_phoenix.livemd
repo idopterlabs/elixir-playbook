@@ -1,0 +1,288 @@
+# Guia para os devs Elixir/Phoenix
+
+```elixir
+Mix.install([
+  {:ecto, "~> 3.8"},
+  {:ecto_sql, "~> 3.8"},
+  {:tesla, "~> 1.5"},
+  {:jason, "~> 1.4"},
+  {:kino_db, "~> 0.2.1"},
+  {:kino, "~> 0.9.0"},
+  {:postgrex, "~> 0.16.3"}
+])
+
+defmodule PlayBook.Repo do
+  use Ecto.Repo,
+    otp_app: :play_book,
+    adapter: Ecto.Adapters.Postgres
+end
+
+defmodule PlayBook.Data.User do
+  use Ecto.Schema
+  import Ecto.Changeset
+
+  schema "users" do
+    field(:name, :string)
+    field(:email, :string)
+
+    timestamps()
+  end
+
+  def changeset(user, attrs) do
+    cast(user, attrs, [:name, :email])
+  end
+end
+
+defmodule PlayBook.Data.Client do
+  use Ecto.Schema
+  import Ecto.Changeset
+
+  schema "clients" do
+    field(:name, :string)
+    field(:email, :string)
+
+    timestamps()
+  end
+
+  def changeset(client, attrs) do
+    cast(client, attrs, [:name, :email])
+  end
+end
+```
+
+## Convenções da Idopter Labs
+
+![](<https://github.com/idopterlabs/elixir-playbook/blob/main/images/image-removebg-preview%20(1).png?raw=true>)
+
+### Conteúdo
+
+* Guia de Code Style
+* Estrutura básica dos projetos na Arquitetura Phoenix
+* Nomenclaturas
+* Funções no Repo
+* Uso do "alias"
+* Integração com APIs Externas
+* Considerações
+
+<!-- livebook:{"break_markdown":true} -->
+
+### Guia de Code Style
+
+A principal referência em estilo de código em Elixir, mantido pela comunidade e recomendado para os desenvolvedores na Idopter Labs está compartilhado no repositório abaixo:
+
+[Elixir Style Guide](https://github.com/gusaiani/elixir_style_guide/blob/master/README_ptBR.md)
+
+## Estrutura básica dos projetos Phoenix
+
+### Arquitetura a ser seguida no Phoenix:
+
+![](https://github.com/idopterlabs/elixir-playbook/blob/main/images/arquitetura.png?raw=true)
+
+#### Exemplo:
+
+![](https://github.com/idopterlabs/elixir-playbook/blob/main/images/exemplo_arquitetura.png?raw=true)
+
+## Nomemclaturas - Funções no Repo
+
+#### Iniciar com `query` quando o retorno é do tipo `Ecto.Query`
+
+Exemplo:
+
+```elixir
+defmodule PlayBook.Repo.QueryUser do
+  import Ecto.Query
+
+  alias PlayBook.Data
+
+  def query_user(user_id) do
+    from(
+      user in Data.User,
+      where: user.id == ^user_id
+    )
+  end
+end
+```
+
+#### iniciar com `get_` quando retorna o struct `Repo.one()`
+
+Exemplo:
+
+```elixir
+defmodule PlayBook.Repo.GetUser do
+  import Ecto.Query
+
+  alias PlayBook.Data
+  alias PlayBook.Repo
+
+  def get(user_id) do
+    Repo.one(
+      from(
+        user in Data.User,
+        where: user.id == ^user_id
+      )
+    )
+  end
+end
+```
+
+#### iniciar com `list_` quando retornar um list `Repo.all()`
+
+Exemplo:
+
+```elixir
+defmodule PlayBook.Repo.ListUser do
+  alias PlayBook.Data
+  alias PlayBook.Repo
+
+  def list(), do: Repo.all(Data.User)
+end
+```
+
+#### quando tiver uma `Ecto.Query` repetida, com uma mesma definição de `from(...)`, recomenda-se extrair a repetição para uma outra function iniciando com `from_`
+
+Exemplo:
+
+```elixir
+defmodule PlayBook.Repo.Queries do
+  import Ecto.Query
+
+  # ou PlayBook.Data.{Client, User}
+  alias PlayBook.Data
+
+  def query_all_users_by_client(client_id) do
+    from(
+      [users, clients] in from_users_with_clients(),
+      where: clients.id == ^client_id
+    )
+  end
+
+  def query_active_users_by_client(client_id) do
+    from(
+      [users, clients] in from_users_with_clients(),
+      where: users.active == true,
+      where: clients.id == ^client_id
+    )
+  end
+
+  def from_users_with_clients() do
+    from(
+      users in Data.User,
+      join: clients in Data.Client,
+      on: clients.id == users.client_id
+    )
+  end
+end
+```
+
+## Uso do "alias"
+
+#### Evitar o uso do “as: “, para isso declare o alias até a camada, ou referência de domínio, mas evitando estender a referência para mais de duas chamadas.
+
+Exemplos<br>
+Evitar:
+
+```elixir
+alias PlayBook.Repo.Users, as: UsersRepo
+alias PlayBook.Data.Users, as: UsersData
+alias PlayBook.Repo.Posts, as: PostsRepo
+```
+
+#### Motivo:
+
+Causa estranheza e uma certa redundancia e isso pode escalar muito, principalmente nos módulos de `contexts` onde fica a regra de negócio<br>
+Prefira:
+
+```elixir
+alias Example.Repo
+alias Example.Data
+```
+
+Dessa forma fica mais explícito a camada/domínidio do código como por exemplo<br>
+
+* `Repo.Users.get(user_id)`
+* `Repo.Posts.get(post_id)`
+* `Data.Accounts.changeset(%Account{})`
+
+## Integração com APIs Externas
+
+### Imagina o seguinte cenário:
+
+Temos uma aplicação web que consegue serviços externos, até ai tudo bem. Porém temo que seguir regras ou seja estabelecer um contrato para garantir a consistência e a manutenibilidade, melhorar o suporte e aumentar a adoção e a confiança dos desenvolvedores na API.
+
+#### No exemplo abaixo utilizaremos a api do [VIACEP](https://viacep.com.br/).
+
+Como organizar essa integração de uma forma que fique claro para os desenvolvedores o que eu espero enviar e o que eu espero como retorno?
+
+##### Exemplos:
+
+```elixir
+defmodule PlayBook.Api.ViaCep.Client do
+  @type cep :: String.t()
+  @type city_values :: list(String.t())
+
+  @type cep_result_success :: {:ok, any()} | {:ok, list(any())}
+  @type cep_result_error :: {:error, atom()}
+
+  @type cep_results :: cep_result_success() | cep_result_error()
+
+  @type input :: cep() | city_values()
+
+  @callback perform(input()) :: cep_results
+end
+
+defmodule PlayBook.Api.ViaCep.Search do
+  @behaviour PlayBook.Api.ViaCep.Client
+
+  use Tesla
+
+  alias PlayBook.Api.ViaCep.Client
+
+  plug(Tesla.Middleware.BaseUrl, "https://viacep.com.br/ws/")
+  plug(Tesla.Middleware.JSON)
+
+  @spec by_cep(Client.cep()) :: Client.cep_results()
+  def by_cep(cep) do
+    perform(cep)
+  end
+
+  @spec by_city_values(Client.city_values()) :: Client.cep_results()
+  def by_city_values([estado, cidade, logradouro] = _city_values) do
+    perform("#{estado}/#{cidade}/#{logradouro}/")
+  end
+
+  @impl true
+  def perform(cep) when is_binary(cep) do
+    "#{cep}/json"
+    |> get()
+    |> handle_get()
+  end
+
+  defp handle_get({:ok, %Tesla.Env{status: 200, body: body}}), do: {:ok, body}
+  defp handle_get({:ok, %Tesla.Env{status: 400}}), do: {:error, "Cep Não encontrado"}
+  defp handle_get({:error, reason}), do: {:error, reason}
+end
+```
+
+
+
+```elixir
+alias PlayBook.Api.ViaCep
+
+ViaCep.Search.by_cep("78195000")
+```
+
+```elixir
+alias PlayBook.Api.ViaCep
+
+ViaCep.Search.by_city_values(["PA", "Belem", "Domingos"])
+```
+
+## Considerações finais
+
+### Próximos passos
+
+* Deploy na nuvem com CI para atualizações automáticas do PlayBook
+* Abrir o Repo para contribuição
+* Fazer o fork do projeto e contribuir com a nossa estrutura
+  </br>
+  https://github.com/idopterlabs/elixir-playbook

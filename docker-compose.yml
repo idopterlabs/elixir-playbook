@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  livebook:
+    image: ghcr.io/livebook-dev/livebook:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./notebooks:/data
+    environment:
+      - LIVEBOOK_PASSWORD=default_password
