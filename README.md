@@ -13,7 +13,7 @@
 ## Índice
 
 * [Sobre o projeto](#sobre-o-projeto)
-* [Tecnologias utilizadas](#tecnologias-utilizadas)
+* [Tecnologias utilizadas](#tecnologia-utilizada)
 * [Pré-requisitos](#pré-requisitos)
 * [Configuração do ambiente](#configuração-do-ambiente)
 * [Como executar](#como-executar)
@@ -26,7 +26,7 @@ O guia abrange tópicos como Code Style, estrutura de projetos na Arquitetura Ph
 
 Ao seguir as orientações propostas neste guia, você estará contribuindo para a criação de um ambiente de desenvolvimento mais organizado e colaborativo, onde todos os membros da equipe poderão trabalhar de maneira eficiente e consistente.
 
-## Tecnologias utilizada
+## Tecnologia utilizada
 
 * [LiveBook](https://livebook.dev/)
 
