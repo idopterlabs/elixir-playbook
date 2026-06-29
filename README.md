@@ -1,4 +1,4 @@
-# Elixir PlayBook
+## Elixir PlayBook
 
 <p align="center">
   <img src="https://github.com/idopterlabs/elixir-playbook/blob/main/images/image-removebg-preview%20(1).png?raw=true" alt="Logo do projeto" width="200">
@@ -60,4 +60,3 @@ autentique com a senha padrão no arquivo `docker-compose.yml`
 
 Aperte em `Open` e selecione o nosso arquivo, em seguida aperte 
 `open` novamente e já terá acesso ao nosso PlayBook e poderá utilizar como referência ou até mesmo contribuir com ideias.
-
